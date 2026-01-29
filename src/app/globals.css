@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+  --baby-blue: #89CFF0;
+  --baby-pink: #F4C2C2;
+  --cloud-white: #ffffff;
+  --soft-gold: #FFD700;
+
+  --background: #0B1120;
+  /* Deep dark blue */
+  --foreground: #F8FAFC;
+  /* Off-white text */
+}
+
+@theme inline {
+  --color-baby-blue: var(--baby-blue);
+  --color-baby-pink: var(--baby-pink);
+  --color-cloud-white: var(--cloud-white);
+  --color-soft-gold: var(--soft-gold);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --font-sans: var(--font-fredoka), sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  /* Prevent horizontal scroll from animations */
+}
+
+/* Subtle Noise Texture Overlay */
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3ChcfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
