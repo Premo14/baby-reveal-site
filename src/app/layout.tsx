@@ -8,7 +8,7 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "The Premo Family Surprise",
+  title: "Baby Reveal",
   description: "Something special is coming...",
 };
 

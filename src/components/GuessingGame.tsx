@@ -47,11 +47,8 @@ export default function GuessingGame() {
             await addGuess(name, guess);
             setSubmitted(true);
 
-            // Optimistic update for instant gratification
-            setCounts(prev => ({
-                ...prev,
-                [guess]: prev[guess] + 1
-            }));
+            // Optimistic update removed to avoid double-counting with real-time subscription
+            // setCounts(prev => ({ ...prev, [guess]: prev[guess] + 1 }));
 
             // Victory confetti
             confetti({
