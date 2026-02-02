@@ -10,10 +10,10 @@ export default function Hero() {
             {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <Image
-                    src="/traditional_hero_bg.png"
-                    alt="Baby Announcement Background"
+                    src="/hero_bg_responsive.png"
+                    alt="Elegant Background Texture"
                     fill
-                    className="object-cover opacity-90"
+                    className="object-cover object-center opacity-90"
                     priority
                 />
                 {/* Soft overlay to ensure text contrast if needed, though the image has a clear center */}
@@ -35,7 +35,7 @@ export default function Hero() {
                             transition={{ delay: 0.3 }}
                         >
                             <h2 className="text-xl md:text-2xl text-[#8B7355] mb-4 font-serif italic tracking-wide">
-                                The Premo Family Surprise
+                                Coming Soon
                             </h2>
                         </motion.div>
 
@@ -46,10 +46,10 @@ export default function Hero() {
                             transition={{ delay: 0.6 }}
                         >
                             <h1 className="text-4xl md:text-5xl font-serif text-[#4A4036] uppercase tracking-widest">
-                                We Are
+                                Baby
                             </h1>
                             <h1 className="text-5xl md:text-6xl font-serif font-bold text-[#4A4036] uppercase tracking-widest mt-2">
-                                Expecting
+                                Premo
                             </h1>
                         </motion.div>
 
@@ -59,7 +59,7 @@ export default function Hero() {
                             animate={{ opacity: 1 }}
                             transition={{ delay: 1 }}
                         >
-                            JULY 2026
+                            October 2026
                         </motion.p>
                     </motion.div>
                 </FloatingContainer>
@@ -67,7 +67,7 @@ export default function Hero() {
                 <FloatingContainer delay={0.6}>
                     <motion.button
                         onClick={() => document.getElementById('guess-section')?.scrollIntoView({ behavior: 'smooth' })}
-                        className="mt-12 px-8 py-3 bg-[#8B7355] text-[#F5F0E6] rounded shadow-[2px_4px_6px_rgba(0,0,0,0.3),inset_0_-2px_4px_rgba(0,0,0,0.2),inset_0_2px_4px_rgba(255,255,255,0.2)] font-serif text-lg tracking-wider hover:bg-[#6F5B43] hover:translate-y-[1px] hover:shadow-[1px_2px_4px_rgba(0,0,0,0.3)] transition-all transform active:scale-95 flex items-center gap-2 border border-[#6F5B43]"
+                        className="mt-12 px-8 py-3 bg-[#8B7355] text-[#F5F0E6] rounded shadow-[2px_4px_6px_rgba(0,0,0,0.3),inset_0_-2px_4px_rgba(0,0,0,0.2),inset_0_2px_4px_rgba(255,255,255,0.2)] font-serif text-lg tracking-wider hover:bg-[#6F5B43] hover:translate-y-px hover:shadow-[1px_2px_4px_rgba(0,0,0,0.3)] transition-all transform active:scale-95 flex items-center gap-2 border border-[#6F5B43]"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 1.5 }}

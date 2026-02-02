@@ -1,7 +1,8 @@
 import { db } from "@/lib/firebase";
-import { collection, addDoc, onSnapshot, query, Unsubscribe } from "firebase/firestore";
+import { collection, doc, onSnapshot, runTransaction, setDoc, getDoc } from "firebase/firestore";
 
-const COLLECTION_NAME = "guesses";
+const GUESSES_COLLECTION = "guesses";
+const STATS_DOC_PATH = "stats/counts";
 const LOCAL_STORAGE_KEY = "mock_guesses";
 
 export interface Guess {
@@ -9,6 +10,11 @@ export interface Guess {
     name: string;
     gender: "boy" | "girl";
     timestamp: Date;
+}
+
+export interface Counts {
+    boy: number;
+    girl: number;
 }
 
 const isMockMode = () => {
@@ -45,47 +51,73 @@ export const addGuess = async (name: string, gender: "boy" | "girl") => {
             return;
         }
 
-        await addDoc(collection(db, COLLECTION_NAME), {
-            name,
-            gender,
-            timestamp: new Date()
+        // Real Mode: Use Transaction to securely increment count + save guess
+        await runTransaction(db, async (transaction) => {
+            const statsRef = doc(db, STATS_DOC_PATH);
+            const statsDoc = await transaction.get(statsRef);
+
+            let newCounts: Counts = { boy: 0, girl: 0 };
+
+            if (statsDoc.exists()) {
+                newCounts = statsDoc.data() as Counts;
+            }
+
+            // 1. Increment the counter locally
+            newCounts[gender]++;
+
+            // 2. Create a reference for the new guess
+            const newGuessRef = doc(collection(db, GUESSES_COLLECTION));
+
+            // 3. Write updates
+            transaction.set(statsRef, newCounts);
+            transaction.set(newGuessRef, {
+                name,
+                gender,
+                timestamp: new Date()
+            });
         });
+
     } catch (error) {
         console.error("Error adding guess:", error);
         throw error;
     }
 };
 
-export const subscribeToGuesses = (callback: (guesses: Guess[]) => void): Unsubscribe => {
+export const subscribeToStats = (callback: (counts: Counts) => void): () => void => {
     if (isMockMode()) {
-        console.log("Mock Mode: Subscribing to LocalStorage");
+        console.log("Mock Mode: Subscribing to LocalStorage Stats");
 
-        const loadLocal = () => {
+        const loadLocalStats = () => {
             const guesses = getLocalGuesses();
-            callback(guesses);
+            const counts = guesses.reduce((acc, curr) => {
+                acc[curr.gender]++;
+                return acc;
+            }, { boy: 0, girl: 0 });
+            callback(counts);
         };
 
         // Initial load
-        loadLocal();
+        loadLocalStats();
 
         // Listen for updates from the same window
-        window.addEventListener("local-storage-update", loadLocal);
+        window.addEventListener("local-storage-update", loadLocalStats);
         // Listen for updates from other tabs
-        window.addEventListener("storage", loadLocal);
+        window.addEventListener("storage", loadLocalStats);
 
         return () => {
-            window.removeEventListener("local-storage-update", loadLocal);
-            window.removeEventListener("storage", loadLocal);
+            window.removeEventListener("local-storage-update", loadLocalStats);
+            window.removeEventListener("storage", loadLocalStats);
         };
     }
 
-    const q = query(collection(db, COLLECTION_NAME));
-    return onSnapshot(q, (snapshot) => {
-        console.log("[DEBUG] Real-time update received!", snapshot.size, "records");
-        const guesses = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        })) as Guess[];
-        callback(guesses);
+    // Real Mode: Listen to the single Stats document
+    const statsRef = doc(db, STATS_DOC_PATH);
+    return onSnapshot(statsRef, (doc) => {
+        if (doc.exists()) {
+            callback(doc.data() as Counts);
+        } else {
+            // If doc doesn't exist yet, assume 0/0
+            callback({ boy: 0, girl: 0 });
+        }
     });
 };

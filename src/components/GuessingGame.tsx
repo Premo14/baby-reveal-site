@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
-import { addGuess, subscribeToGuesses, Guess } from "@/services/guessingService";
+import { addGuess, subscribeToStats, Counts } from "@/services/guessingService";
 import FloatingContainer from "./FloatingContainer";
 
 export default function GuessingGame() {
@@ -13,11 +13,7 @@ export default function GuessingGame() {
     const [counts, setCounts] = useState({ boy: 0, girl: 0 });
 
     useEffect(() => {
-        const unsubscribe = subscribeToGuesses((guesses: Guess[]) => {
-            const newCounts = guesses.reduce((acc, curr) => {
-                acc[curr.gender]++;
-                return acc;
-            }, { boy: 0, girl: 0 });
+        const unsubscribe = subscribeToStats((newCounts: Counts) => {
             setCounts(newCounts);
         });
 
@@ -29,7 +25,7 @@ export default function GuessingGame() {
 
         // Trigger confetti based on selection
         // Muted colors for traditional vibe
-        const color = selectedGuess === "boy" ? "#a8c0ce" : "#eec4c4";
+        const color = selectedGuess === "boy" ? "#2949FF" : "#FF007F";
         confetti({
             particleCount: 100,
             spread: 70,
@@ -55,7 +51,7 @@ export default function GuessingGame() {
                 particleCount: 200,
                 spread: 100,
                 origin: { y: 0.6 },
-                colors: ["#8b7355", "#f5f0e6", guess === "boy" ? "#a8c0ce" : "#eec4c4"]
+                colors: ["#8b7355", "#f5f0e6", guess === "boy" ? "#2949FF" : "#FF007F"]
             });
         } catch (error) {
             console.error("Failed to submit guess", error);
@@ -63,7 +59,7 @@ export default function GuessingGame() {
     };
 
     return (
-        <section className="min-h-screen py-20 px-4 flex flex-col items-center relative z-10 bg-[#F5F0E6]">
+        <section className="pt-20 pb-8 px-4 flex flex-col items-center relative z-10 bg-[#F5F0E6]">
             <FloatingContainer delay={0.3}>
                 <motion.div
                     initial={{ opacity: 0, y: 50 }}
@@ -81,12 +77,12 @@ export default function GuessingGame() {
                         <motion.div
                             initial={{ width: "50%" }}
                             animate={{ width: `${(counts.boy / (counts.boy + counts.girl || 1)) * 100}%` }}
-                            className="h-full bg-[#a8c0ce] transition-all duration-1000"
+                            className="h-full bg-[#2949FF] transition-all duration-1000"
                         />
                         <motion.div
                             initial={{ width: "50%" }}
                             animate={{ width: `${(counts.girl / (counts.boy + counts.girl || 1)) * 100}%` }}
-                            className="h-full bg-[#eec4c4] transition-all duration-1000"
+                            className="h-full bg-[#FF007F] transition-all duration-1000"
                         />
                     </div>
 
@@ -120,8 +116,8 @@ export default function GuessingGame() {
                                     type="button"
                                     onClick={() => handleGuess("boy")}
                                     className={`flex-1 py-4 rounded border-2 transition-all transform hover:scale-105 active:scale-95 font-serif text-lg ${guess === "boy"
-                                        ? "border-[#a8c0ce] bg-[#a8c0ce]/20 text-[#6b8a9e] font-bold shadow-md"
-                                        : "border-[#D4C4A8] hover:border-[#a8c0ce]/50 text-[#8B7355]/60 hover:text-[#6b8a9e] hover:bg-[#a8c0ce]/10"
+                                        ? "border-[#2949FF] bg-[#2949FF]/20 text-[#2949FF] font-bold shadow-md"
+                                        : "border-[#D4C4A8] hover:border-[#2949FF]/50 text-[#8B7355]/60 hover:text-[#2949FF] hover:bg-[#2949FF]/10"
                                         }`}
                                 >
                                     💙 Boy
@@ -130,8 +126,8 @@ export default function GuessingGame() {
                                     type="button"
                                     onClick={() => handleGuess("girl")}
                                     className={`flex-1 py-4 rounded border-2 transition-all transform hover:scale-105 active:scale-95 font-serif text-lg ${guess === "girl"
-                                        ? "border-[#eec4c4] bg-[#eec4c4]/20 text-[#a87f7f] font-bold shadow-md"
-                                        : "border-[#D4C4A8] hover:border-[#eec4c4]/50 text-[#8B7355]/60 hover:text-[#a87f7f] hover:bg-[#eec4c4]/10"
+                                        ? "border-[#FF007F] bg-[#FF007F]/20 text-[#FF007F] font-bold shadow-md"
+                                        : "border-[#D4C4A8] hover:border-[#FF007F]/50 text-[#8B7355]/60 hover:text-[#FF007F] hover:bg-[#FF007F]/10"
                                         }`}
                                 >
                                     💗 Girl
